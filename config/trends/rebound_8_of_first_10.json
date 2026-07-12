@@ -1,0 +1,80 @@
+{
+  "name": "lost_8_of_first_10_rebound_battles",
+  "description": "Teams that were outrebounded in at least 8 of their first 10 regular-season games.",
+  "season_start": "1983-84",
+  "season_end": "2025-26",
+  "season_type": "Regular Season",
+  "window": {
+    "type": "first_n_games",
+    "size": 10
+  },
+  "condition": {
+    "metric": "rebound_diff",
+    "aggregation": "count",
+    "event_operator": "<",
+    "event_threshold": 0,
+    "operator": ">=",
+    "value": 8
+  },
+  "outcomes": [
+    "win_pct",
+    "league_rank",
+    "off_rating",
+    "off_rating_rank",
+    "def_rating",
+    "def_rating_rank",
+    "net_rating",
+    "net_rating_rank"
+  ],
+  "outcome_conditions": [
+    {
+      "name": "made_playoffs",
+      "column": "made_playoffs",
+      "operator": "==",
+      "value": 1,
+      "description": "Qualified for the playoffs."
+    },
+    {
+      "name": "made_conference_finals",
+      "column": "made_conference_finals",
+      "operator": "==",
+      "value": 1,
+      "description": "Reached the Conference Finals."
+    },
+    {
+      "name": "made_finals",
+      "column": "made_finals",
+      "operator": "==",
+      "value": 1,
+      "description": "Reached the NBA Finals."
+    },
+    {
+      "name": "won_championship",
+      "column": "champion",
+      "operator": "==",
+      "value": 1,
+      "description": "Won the NBA championship."
+    },
+    {
+      "name": "finished_top_10_offense",
+      "column": "off_rating_rank",
+      "operator": "<=",
+      "value": 10,
+      "description": "Finished in the top 10 in offensive rating."
+    },
+    {
+      "name": "finished_top_10_defense",
+      "column": "def_rating_rank",
+      "operator": "<=",
+      "value": 10,
+      "description": "Finished in the top 10 in defensive rating."
+    },
+    {
+      "name": "finished_top_10_net_rating",
+      "column": "net_rating_rank",
+      "operator": "<=",
+      "value": 10,
+      "description": "Finished in the top 10 in net rating."
+    }
+  ]
+}

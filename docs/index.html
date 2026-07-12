@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>NBA Historical Trend Explorer</title>
+
+  <link
+    rel="stylesheet"
+    href="./styles.css"
+  >
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div>
+        <p class="eyebrow">NBA historical research</p>
+
+        <h1>NBA Trend Explorer</h1>
+
+        <p class="header-description">
+          Build a historical trend, compare matching teams with
+          the league baseline, and inspect every occurrence.
+        </p>
+      </div>
+
+      <div
+        id="dataStatus"
+        class="status-badge"
+      >
+        Loading data…
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Step 1</p>
+          <h2>Define the population</h2>
+        </div>
+      </div>
+
+      <div class="form-grid form-grid-four">
+        <label>
+          <span>Starting season</span>
+
+          <select id="seasonStart"></select>
+        </label>
+
+        <label>
+          <span>Ending season</span>
+
+          <select id="seasonEnd"></select>
+        </label>
+
+        <label>
+          <span>Window type</span>
+
+          <select id="windowType">
+            <option value="first_n_games">
+              First N games
+            </option>
+
+            <option value="games_range">
+              Fixed game range
+            </option>
+
+            <option value="rolling">
+              Any rolling window
+            </option>
+          </select>
+        </label>
+
+        <label id="windowSizeField">
+          <span>Window size</span>
+
+          <input
+            id="windowSize"
+            type="number"
+            min="1"
+            max="82"
+            value="10"
+          >
+        </label>
+
+        <label
+          id="rangeStartField"
+          class="hidden"
+        >
+          <span>Starting game</span>
+
+          <input
+            id="rangeStart"
+            type="number"
+            min="1"
+            max="82"
+            value="1"
+          >
+        </label>
+
+        <label
+          id="rangeEndField"
+          class="hidden"
+        >
+          <span>Ending game</span>
+
+          <input
+            id="rangeEnd"
+            type="number"
+            min="1"
+            max="82"
+            value="10"
+          >
+        </label>
+
+        <label>
+          <span>Condition logic</span>
+
+          <select id="conditionLogic">
+            <option value="AND">AND</option>
+            <option value="OR">OR</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Step 2</p>
+          <h2>Define trend conditions</h2>
+        </div>
+
+        <button
+          id="addConditionButton"
+          class="button secondary-button"
+          type="button"
+        >
+          Add condition
+        </button>
+      </div>
+
+      <div id="conditionsContainer"></div>
+
+      <div class="actions-row">
+        <button
+          id="runQueryButton"
+          class="button primary-button"
+          type="button"
+        >
+          Run historical query
+        </button>
+
+        <button
+          id="loadExampleButton"
+          class="button secondary-button"
+          type="button"
+        >
+          Load rebounding example
+        </button>
+      </div>
+
+      <details class="query-preview">
+        <summary>Structured query preview</summary>
+
+        <pre id="queryPreview"></pre>
+      </details>
+    </section>
+
+    <section
+      id="errorPanel"
+      class="panel error-panel hidden"
+    >
+      <h2>Query error</h2>
+      <p id="errorMessage"></p>
+    </section>
+
+    <section
+      id="resultsSection"
+      class="hidden"
+    >
+      <section class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Results</p>
+            <h2>Trend summary</h2>
+          </div>
+        </div>
+
+        <div
+          id="summaryCards"
+          class="summary-grid"
+        ></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Comparison</p>
+            <h2>Outcomes versus baseline</h2>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Outcome</th>
+                <th>Trend teams</th>
+                <th>Baseline</th>
+                <th>Difference</th>
+              </tr>
+            </thead>
+
+            <tbody id="outcomeTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Evidence</p>
+            <h2>Matching occurrences</h2>
+          </div>
+
+          <button
+            id="downloadButton"
+            class="button secondary-button"
+            type="button"
+          >
+            Download CSV
+          </button>
+        </div>
+
+        <p
+          id="occurrenceLimitMessage"
+          class="muted-text"
+        ></p>
+
+        <div class="table-wrapper occurrence-table-wrapper">
+          <table>
+            <thead id="occurrenceTableHead"></thead>
+            <tbody id="occurrenceTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <template id="conditionTemplate">
+    <article class="condition-card">
+      <div class="condition-card-header">
+        <h3 class="condition-title">
+          Condition
+        </h3>
+
+        <button
+          type="button"
+          class="remove-condition-button"
+        >
+          Remove
+        </button>
+      </div>
+
+      <div class="form-grid condition-grid">
+        <label>
+          <span>Metric</span>
+          <select class="condition-metric"></select>
+        </label>
+
+        <label>
+          <span>Aggregation</span>
+
+          <select class="condition-aggregation">
+            <option value="count">Count games</option>
+            <option value="mean">Average</option>
+            <option value="sum">Sum</option>
+            <option value="minimum">Minimum</option>
+            <option value="maximum">Maximum</option>
+          </select>
+        </label>
+
+        <label class="event-operator-field">
+          <span>Per-game comparison</span>
+
+          <select class="condition-event-operator">
+            <option value="<">Below</option>
+            <option value="<=">At most</option>
+            <option value=">">Above</option>
+            <option value=">=">At least</option>
+            <option value="==">Equal to</option>
+            <option value="!=">Not equal to</option>
+          </select>
+        </label>
+
+        <label class="event-threshold-field">
+          <span>Per-game threshold</span>
+
+          <input
+            class="condition-event-threshold"
+            type="number"
+            step="any"
+            value="0"
+          >
+        </label>
+
+        <label>
+          <span>Window comparison</span>
+
+          <select class="condition-operator">
+            <option value=">=">At least</option>
+            <option value=">">Above</option>
+            <option value="<=">At most</option>
+            <option value="<">Below</option>
+            <option value="==">Equal to</option>
+            <option value="!=">Not equal to</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Required value</span>
+
+          <input
+            class="condition-value"
+            type="number"
+            step="any"
+            value="8"
+          >
+        </label>
+      </div>
+
+      <p class="metric-description"></p>
+    </article>
+  </template>
+
+  <script src="./app.js"></script>
+</body>
+</html>

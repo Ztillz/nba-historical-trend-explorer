@@ -1,0 +1,67 @@
+{
+    "name": "rebound_losses_positive_point_diff",
+    "description": "Teams that were outrebounded in at least 8 of their first 10 games but still had a positive average point differential.",
+    "season_start": "1983-84",
+    "season_end": "2025-26",
+    "season_type": "Regular Season",
+    "window": {
+      "type": "first_n_games",
+      "size": 10
+    },
+    "condition_logic": "AND",
+    "conditions": [
+      {
+        "name": "lost_rebound_battles",
+        "metric": "rebound_diff",
+        "aggregation": "count",
+        "event_operator": "<",
+        "event_threshold": 0,
+        "operator": ">=",
+        "value": 8
+      },
+      {
+        "name": "positive_point_differential",
+        "metric": "point_diff",
+        "aggregation": "mean",
+        "operator": ">",
+        "value": 0
+      }
+    ],
+    "outcomes": [
+      "win_pct",
+      "league_rank",
+      "off_rating_rank",
+      "def_rating_rank",
+      "net_rating_rank"
+    ],
+    "outcome_conditions": [
+      {
+        "name": "made_playoffs",
+        "column": "made_playoffs",
+        "operator": "==",
+        "value": 1,
+        "description": "Qualified for the playoffs."
+      },
+      {
+        "name": "made_conference_finals",
+        "column": "made_conference_finals",
+        "operator": "==",
+        "value": 1,
+        "description": "Reached the Conference Finals."
+      },
+      {
+        "name": "won_championship",
+        "column": "champion",
+        "operator": "==",
+        "value": 1,
+        "description": "Won the NBA championship."
+      },
+      {
+        "name": "finished_top_10_net_rating",
+        "column": "net_rating_rank",
+        "operator": "<=",
+        "value": 10,
+        "description": "Finished in the top 10 in net rating."
+      }
+    ]
+  }
