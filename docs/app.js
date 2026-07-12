@@ -40,26 +40,45 @@ const elements = {
   rangeStartField: document.getElementById("rangeStartField"),
   rangeEndField: document.getElementById("rangeEndField"),
   conditionLogic: document.getElementById("conditionLogic"),
-  conditionsContainer: document.getElementById("conditionsContainer"),
-  conditionTemplate: document.getElementById("conditionTemplate"),
-  addConditionButton: document.getElementById("addConditionButton"),
-  runQueryButton: document.getElementById("runQueryButton"),
-  loadExampleButton: document.getElementById("loadExampleButton"),
+  conditionsContainer: document.getElementById(
+    "conditionsContainer"
+  ),
+  conditionTemplate: document.getElementById(
+    "conditionTemplate"
+  ),
+  addConditionButton: document.getElementById(
+    "addConditionButton"
+  ),
+  runQueryButton: document.getElementById(
+    "runQueryButton"
+  ),
+  loadExampleButton: document.getElementById(
+    "loadExampleButton"
+  ),
   queryPreview: document.getElementById("queryPreview"),
   errorPanel: document.getElementById("errorPanel"),
   errorMessage: document.getElementById("errorMessage"),
   resultsSection: document.getElementById("resultsSection"),
   summaryCards: document.getElementById("summaryCards"),
-  outcomeTableBody: document.getElementById("outcomeTableBody"),
-  occurrenceTableHead: document.getElementById("occurrenceTableHead"),
-  occurrenceTableBody: document.getElementById("occurrenceTableBody"),
+  outcomeTableBody: document.getElementById(
+    "outcomeTableBody"
+  ),
+  occurrenceTableHead: document.getElementById(
+    "occurrenceTableHead"
+  ),
+  occurrenceTableBody: document.getElementById(
+    "occurrenceTableBody"
+  ),
   occurrenceLimitMessage: document.getElementById(
     "occurrenceLimitMessage"
   ),
   downloadButton: document.getElementById("downloadButton"),
 };
 
-document.addEventListener("DOMContentLoaded", initializeApp);
+document.addEventListener(
+  "DOMContentLoaded",
+  initializeApp
+);
 
 async function initializeApp() {
   bindEvents();
@@ -76,8 +95,12 @@ async function initializeApp() {
     ]);
 
     state.metadata = metadata;
-    state.gameColumns = createColumnIndex(gamePayload.columns);
-    state.seasonColumns = createColumnIndex(seasonPayload.columns);
+    state.gameColumns = createColumnIndex(
+      gamePayload.columns
+    );
+    state.seasonColumns = createColumnIndex(
+      seasonPayload.columns
+    );
     state.gameRows = gamePayload.rows;
     state.seasonRows = seasonPayload.rows;
 
@@ -87,7 +110,7 @@ async function initializeApp() {
     loadReboundingExample();
 
     elements.dataStatus.textContent =
-      `${metadata.team_game_rows.toLocaleString()} games rows loaded`;
+      `${metadata.team_game_rows.toLocaleString()} game rows loaded`;
 
     updateQueryPreview();
   } catch (error) {
@@ -181,6 +204,10 @@ function getGameValue(row, key) {
 }
 
 function getSeasonValue(row, key) {
+  if (!row) {
+    return null;
+  }
+
   const index = state.seasonColumns[key];
 
   if (index === undefined) {
@@ -195,6 +222,9 @@ function teamSeasonKey(season, teamId) {
 }
 
 function buildIndexes() {
+  state.gameGroups.clear();
+  state.seasonOutcomes.clear();
+
   for (const row of state.gameRows) {
     const season = getGameValue(row, "s");
     const teamId = getGameValue(row, "tid");
@@ -244,14 +274,14 @@ function populateSeasonSelectors() {
   }
 
   elements.seasonStart.value = seasons[0];
-  elements.seasonEnd.value = seasons[seasons.length - 1];
+  elements.seasonEnd.value =
+    seasons[seasons.length - 1];
 }
 
 function addCondition(initialValues = {}) {
   const fragment =
     elements.conditionTemplate.content.cloneNode(true);
 
-  const card = fragment.querySelector(".condition-card");
   const metricSelect = fragment.querySelector(
     ".condition-metric"
   );
@@ -268,7 +298,11 @@ function addCondition(initialValues = {}) {
   const insertedCard =
     elements.conditionsContainer.lastElementChild;
 
-  setConditionValues(insertedCard, initialValues);
+  setConditionValues(
+    insertedCard,
+    initialValues
+  );
+
   bindConditionEvents(insertedCard);
   updateConditionCard(insertedCard);
   updateConditionTitles();
@@ -276,33 +310,39 @@ function addCondition(initialValues = {}) {
 
 function setConditionValues(card, values) {
   if (values.metric) {
-    card.querySelector(".condition-metric").value =
-      values.metric;
+    card.querySelector(
+      ".condition-metric"
+    ).value = values.metric;
   }
 
   if (values.aggregation) {
-    card.querySelector(".condition-aggregation").value =
-      values.aggregation;
+    card.querySelector(
+      ".condition-aggregation"
+    ).value = values.aggregation;
   }
 
   if (values.event_operator) {
-    card.querySelector(".condition-event-operator").value =
-      values.event_operator;
+    card.querySelector(
+      ".condition-event-operator"
+    ).value = values.event_operator;
   }
 
   if (values.event_threshold !== undefined) {
-    card.querySelector(".condition-event-threshold").value =
-      values.event_threshold;
+    card.querySelector(
+      ".condition-event-threshold"
+    ).value = values.event_threshold;
   }
 
   if (values.operator) {
-    card.querySelector(".condition-operator").value =
-      values.operator;
+    card.querySelector(
+      ".condition-operator"
+    ).value = values.operator;
   }
 
   if (values.value !== undefined) {
-    card.querySelector(".condition-value").value =
-      values.value;
+    card.querySelector(
+      ".condition-value"
+    ).value = values.value;
   }
 }
 
@@ -372,11 +412,17 @@ function updateConditionCard(card) {
 
   card.querySelector(
     ".event-operator-field"
-  ).classList.toggle("hidden", !countMode);
+  ).classList.toggle(
+    "hidden",
+    !countMode
+  );
 
   card.querySelector(
     ".event-threshold-field"
-  ).classList.toggle("hidden", !countMode);
+  ).classList.toggle(
+    "hidden",
+    !countMode
+  );
 }
 
 function updateConditionTitles() {
@@ -453,7 +499,9 @@ function buildQueryFromForm() {
     windowType === "first_n_games"
     || windowType === "rolling"
   ) {
-    const size = Number(elements.windowSize.value);
+    const size = Number(
+      elements.windowSize.value
+    );
 
     if (!Number.isInteger(size) || size <= 0) {
       throw new Error(
@@ -463,8 +511,13 @@ function buildQueryFromForm() {
 
     windowDefinition.size = size;
   } else {
-    const startGame = Number(elements.rangeStart.value);
-    const endGame = Number(elements.rangeEnd.value);
+    const startGame = Number(
+      elements.rangeStart.value
+    );
+
+    const endGame = Number(
+      elements.rangeEnd.value
+    );
 
     if (
       !Number.isInteger(startGame)
@@ -515,9 +568,10 @@ function buildQueryFromForm() {
       }
 
       if (aggregation === "count") {
-        condition.event_operator = card.querySelector(
-          ".condition-event-operator"
-        ).value;
+        condition.event_operator =
+          card.querySelector(
+            ".condition-event-operator"
+          ).value;
 
         condition.event_threshold = Number(
           card.querySelector(
@@ -545,7 +599,8 @@ function buildQueryFromForm() {
     season_end: seasonEnd,
     season_type: "Regular Season",
     window: windowDefinition,
-    condition_logic: elements.conditionLogic.value,
+    condition_logic:
+      elements.conditionLogic.value,
     conditions,
   };
 }
@@ -555,7 +610,11 @@ function updateQueryPreview() {
     const query = buildQueryFromForm();
 
     elements.queryPreview.textContent =
-      JSON.stringify(query, null, 2);
+      JSON.stringify(
+        query,
+        null,
+        2
+      );
   } catch {
     elements.queryPreview.textContent =
       "Complete the form to preview the query.";
@@ -581,8 +640,14 @@ function runQueryFromForm() {
 function executeTrendQuery(query) {
   const eligibleGroups = [];
 
-  for (const [key, games] of state.gameGroups.entries()) {
-    const season = getGameValue(games[0], "s");
+  for (
+    const [key, games]
+    of state.gameGroups.entries()
+  ) {
+    const season = getGameValue(
+      games[0],
+      "s"
+    );
 
     if (
       season < query.season_start
@@ -597,13 +662,30 @@ function executeTrendQuery(query) {
     });
   }
 
+  /*
+   * Occurrences stores one row per matched team-season.
+   *
+   * For rolling queries, only the earliest qualifying
+   * window is stored for each team-season.
+   */
   const occurrences = [];
+
+  /*
+   * This separately counts every rolling window that
+   * matched, including overlapping windows.
+   *
+   * It is informational only and is not used as the
+   * outcome-analysis sample size.
+   */
+  let matchingWindowCount = 0;
 
   for (const group of eligibleGroups) {
     const windows = buildWindows(
       group.games,
       query.window
     );
+
+    let firstMatchingOccurrence = null;
 
     for (const windowGames of windows) {
       const evaluatedConditions =
@@ -628,43 +710,83 @@ function executeTrendQuery(query) {
         continue;
       }
 
+      matchingWindowCount += 1;
+
+      /*
+       * Keep scanning all rolling windows so we can count
+       * every matching window, but only store the first
+       * match for the team-season.
+       */
+      if (firstMatchingOccurrence) {
+        continue;
+      }
+
       const firstGame = windowGames[0];
-      const season = getGameValue(firstGame, "s");
-      const teamId = getGameValue(firstGame, "tid");
-      const outcomeRow = state.seasonOutcomes.get(
-        teamSeasonKey(season, teamId)
+      const lastGame =
+        windowGames[windowGames.length - 1];
+
+      const season = getGameValue(
+        firstGame,
+        "s"
       );
 
-      occurrences.push({
+      const teamId = getGameValue(
+        firstGame,
+        "tid"
+      );
+
+      const outcomeRow =
+        state.seasonOutcomes.get(
+          teamSeasonKey(
+            season,
+            teamId
+          )
+        );
+
+      firstMatchingOccurrence = {
         season,
         team_id: teamId,
-        team_name: getGameValue(firstGame, "tn"),
+        team_name: getGameValue(
+          firstGame,
+          "tn"
+        ),
         team_abbreviation: getGameValue(
           firstGame,
           "ta"
         ),
         window_start_game: getGameValue(
-          windowGames[0],
+          firstGame,
           "gn"
         ),
         window_end_game: getGameValue(
-          windowGames[windowGames.length - 1],
+          lastGame,
           "gn"
         ),
         window_start_date: getGameValue(
-          windowGames[0],
+          firstGame,
           "gd"
         ),
         window_end_date: getGameValue(
-          windowGames[windowGames.length - 1],
+          lastGame,
           "gd"
         ),
         conditions: evaluatedConditions,
         outcome_row: outcomeRow,
-      });
+      };
+    }
+
+    if (firstMatchingOccurrence) {
+      occurrences.push(
+        firstMatchingOccurrence
+      );
     }
   }
 
+  /*
+   * Since occurrences now contains one row per
+   * team-season, this set is still used as an
+   * additional integrity check.
+   */
   const uniqueMatchedKeys = new Set(
     occurrences.map(
       (occurrence) =>
@@ -691,20 +813,42 @@ function executeTrendQuery(query) {
   const trendOutcomeRows = Array.from(
     uniqueMatchedKeys
   )
-    .map((key) => state.seasonOutcomes.get(key))
+    .map(
+      (key) =>
+        state.seasonOutcomes.get(key)
+    )
     .filter(Boolean);
 
   return {
     query,
-    eligible_team_seasons: eligibleGroups.length,
-    occurrence_count: occurrences.length,
-    matched_team_seasons: uniqueMatchedKeys.size,
+    eligible_team_seasons:
+      eligibleGroups.length,
+
+    /*
+     * Unique team-season occurrences used for
+     * outcome calculations.
+     */
+    occurrence_count:
+      occurrences.length,
+
+    /*
+     * Total matching windows, including overlapping
+     * rolling windows.
+     */
+    matching_window_count:
+      matchingWindowCount,
+
+    matched_team_seasons:
+      uniqueMatchedKeys.size,
+
     match_rate:
       eligibleGroups.length > 0
         ? uniqueMatchedKeys.size
           / eligibleGroups.length
         : null,
+
     occurrences,
+
     outcome_results: summarizeOutcomes(
       trendOutcomeRows,
       baselineRows
@@ -712,18 +856,33 @@ function executeTrendQuery(query) {
   };
 }
 
-function buildWindows(games, windowDefinition) {
-  if (windowDefinition.type === "first_n_games") {
-    if (games.length < windowDefinition.size) {
+function buildWindows(
+  games,
+  windowDefinition
+) {
+  if (
+    windowDefinition.type
+    === "first_n_games"
+  ) {
+    if (
+      games.length
+      < windowDefinition.size
+    ) {
       return [];
     }
 
     return [
-      games.slice(0, windowDefinition.size),
+      games.slice(
+        0,
+        windowDefinition.size
+      ),
     ];
   }
 
-  if (windowDefinition.type === "games_range") {
+  if (
+    windowDefinition.type
+    === "games_range"
+  ) {
     const startIndex =
       windowDefinition.start_game - 1;
 
@@ -740,12 +899,17 @@ function buildWindows(games, windowDefinition) {
       endIndex
     );
 
-    return windowGames.length === expectedSize
-      ? [windowGames]
-      : [];
+    return (
+      windowGames.length === expectedSize
+        ? [windowGames]
+        : []
+    );
   }
 
-  if (windowDefinition.type === "rolling") {
+  if (
+    windowDefinition.type
+    === "rolling"
+  ) {
     const windows = [];
     const size = windowDefinition.size;
 
@@ -758,12 +922,21 @@ function buildWindows(games, windowDefinition) {
       startIndex <= games.length - size;
       startIndex += 1
     ) {
-      windows.push(
-        games.slice(
-          startIndex,
-          startIndex + size
-        )
+      const windowGames = games.slice(
+        startIndex,
+        startIndex + size
       );
+
+      /*
+       * Defensive validation: every rolling window
+       * must contain exactly the requested number
+       * of games.
+       */
+      if (
+        windowGames.length === size
+      ) {
+        windows.push(windowGames);
+      }
     }
 
     return windows;
@@ -774,10 +947,15 @@ function buildWindows(games, windowDefinition) {
   );
 }
 
-function evaluateCondition(games, condition) {
-  const metric = state.metadata.metrics.find(
-    (item) => item.id === condition.metric
-  );
+function evaluateCondition(
+  games,
+  condition
+) {
+  const metric =
+    state.metadata.metrics.find(
+      (item) =>
+        item.id === condition.metric
+    );
 
   if (!metric) {
     throw new Error(
@@ -786,12 +964,20 @@ function evaluateCondition(games, condition) {
   }
 
   const values = games
-    .map((game) => getGameValue(game, metric.key))
+    .map(
+      (game) =>
+        getGameValue(
+          game,
+          metric.key
+        )
+    )
     .filter(
       (value) =>
         value !== null
         && value !== undefined
-        && Number.isFinite(Number(value))
+        && Number.isFinite(
+          Number(value)
+        )
     )
     .map(Number);
 
@@ -803,27 +989,35 @@ function evaluateCondition(games, condition) {
     };
   }
 
-  const aggregatedValue = aggregateValues(
-    values,
-    condition
-  );
+  const aggregatedValue =
+    aggregateValues(
+      values,
+      condition
+    );
 
   return {
     ...condition,
-    aggregated_value: aggregatedValue,
-    matched: OPERATORS[condition.operator](
+    aggregated_value:
       aggregatedValue,
-      condition.value
-    ),
+    matched:
+      OPERATORS[condition.operator](
+        aggregatedValue,
+        condition.value
+      ),
   };
 }
 
-function aggregateValues(values, condition) {
+function aggregateValues(
+  values,
+  condition
+) {
   switch (condition.aggregation) {
     case "count":
       return values.filter(
         (value) =>
-          OPERATORS[condition.event_operator](
+          OPERATORS[
+            condition.event_operator
+          ](
             value,
             condition.event_threshold
           )
@@ -832,14 +1026,16 @@ function aggregateValues(values, condition) {
     case "mean":
       return (
         values.reduce(
-          (total, value) => total + value,
+          (total, value) =>
+            total + value,
           0
         ) / values.length
       );
 
     case "sum":
       return values.reduce(
-        (total, value) => total + value,
+        (total, value) =>
+          total + value,
         0
       );
 
@@ -884,49 +1080,57 @@ function summarizeBinaryOutcome(
   trendRows,
   baselineRows
 ) {
-  const trendValues = extractOutcomeValues(
-    trendRows,
-    outcome.key
-  );
+  const trendValues =
+    extractOutcomeValues(
+      trendRows,
+      outcome.key
+    );
 
-  const baselineValues = extractOutcomeValues(
-    baselineRows,
-    outcome.key
-  );
+  const baselineValues =
+    extractOutcomeValues(
+      baselineRows,
+      outcome.key
+    );
 
-  const trendCount = trendValues.filter(
-    (value) =>
-      OPERATORS[outcome.operator](
-        value,
-        outcome.value
-      )
-  ).length;
+  const trendCount =
+    trendValues.filter(
+      (value) =>
+        OPERATORS[outcome.operator](
+          value,
+          outcome.value
+        )
+    ).length;
 
-  const baselineCount = baselineValues.filter(
-    (value) =>
-      OPERATORS[outcome.operator](
-        value,
-        outcome.value
-      )
-  ).length;
+  const baselineCount =
+    baselineValues.filter(
+      (value) =>
+        OPERATORS[outcome.operator](
+          value,
+          outcome.value
+        )
+    ).length;
 
   const trendRate =
     trendValues.length > 0
-      ? trendCount / trendValues.length
+      ? trendCount
+        / trendValues.length
       : null;
 
   const baselineRate =
     baselineValues.length > 0
-      ? baselineCount / baselineValues.length
+      ? baselineCount
+        / baselineValues.length
       : null;
 
   return {
     ...outcome,
     trend_count: trendCount,
-    trend_denominator: trendValues.length,
+    trend_denominator:
+      trendValues.length,
     trend_value: trendRate,
     baseline_count: baselineCount,
-    baseline_denominator: baselineValues.length,
+    baseline_denominator:
+      baselineValues.length,
     baseline_value: baselineRate,
     difference:
       trendRate !== null
@@ -941,26 +1145,31 @@ function summarizeAverageOutcome(
   trendRows,
   baselineRows
 ) {
-  const trendValues = extractOutcomeValues(
-    trendRows,
-    outcome.key
-  );
+  const trendValues =
+    extractOutcomeValues(
+      trendRows,
+      outcome.key
+    );
 
-  const baselineValues = extractOutcomeValues(
-    baselineRows,
-    outcome.key
-  );
+  const baselineValues =
+    extractOutcomeValues(
+      baselineRows,
+      outcome.key
+    );
 
   const trendMean = mean(trendValues);
-  const baselineMean = mean(baselineValues);
+  const baselineMean =
+    mean(baselineValues);
 
   return {
     ...outcome,
     trend_count: null,
-    trend_denominator: trendValues.length,
+    trend_denominator:
+      trendValues.length,
     trend_value: trendMean,
     baseline_count: null,
-    baseline_denominator: baselineValues.length,
+    baseline_denominator:
+      baselineValues.length,
     baseline_value: baselineMean,
     difference:
       trendMean !== null
@@ -970,14 +1179,25 @@ function summarizeAverageOutcome(
   };
 }
 
-function extractOutcomeValues(rows, key) {
+function extractOutcomeValues(
+  rows,
+  key
+) {
   return rows
-    .map((row) => getSeasonValue(row, key))
+    .map(
+      (row) =>
+        getSeasonValue(
+          row,
+          key
+        )
+    )
     .filter(
       (value) =>
         value !== null
         && value !== undefined
-        && Number.isFinite(Number(value))
+        && Number.isFinite(
+          Number(value)
+        )
     )
     .map(Number);
 }
@@ -989,7 +1209,8 @@ function mean(values) {
 
   return (
     values.reduce(
-      (total, value) => total + value,
+      (total, value) =>
+        total + value,
       0
     ) / values.length
   );
@@ -1001,7 +1222,9 @@ function renderResults(result) {
   );
 
   renderSummaryCards(result);
-  renderOutcomeTable(result.outcome_results);
+  renderOutcomeTable(
+    result.outcome_results
+  );
   renderOccurrenceTable(result);
 
   elements.resultsSection.scrollIntoView({
@@ -1019,91 +1242,107 @@ function renderSummaryCards(result) {
           .toLocaleString(),
     },
     {
-      label: "Matching occurrences",
-      value:
-        result.occurrence_count
-          .toLocaleString(),
-    },
-    {
       label: "Matched team-seasons",
       value:
         result.matched_team_seasons
           .toLocaleString(),
     },
     {
-      label: "Match rate",
+      label: "Matching windows",
+      value:
+        result.matching_window_count
+          .toLocaleString(),
+    },
+    {
+      label: "Team-season match rate",
       value:
         result.match_rate === null
           ? "N/A"
-          : formatPercentage(result.match_rate),
+          : formatPercentage(
+              result.match_rate
+            ),
     },
   ];
 
-  elements.summaryCards.innerHTML = cards
-    .map(
-      (card) => `
-        <article class="summary-card">
-          <p class="summary-label">
-            ${escapeHtml(card.label)}
-          </p>
+  elements.summaryCards.innerHTML =
+    cards
+      .map(
+        (card) => `
+          <article class="summary-card">
+            <p class="summary-label">
+              ${escapeHtml(card.label)}
+            </p>
 
-          <p class="summary-value">
-            ${escapeHtml(card.value)}
-          </p>
-        </article>
-      `
-    )
-    .join("");
+            <p class="summary-value">
+              ${escapeHtml(card.value)}
+            </p>
+          </article>
+        `
+      )
+      .join("");
 }
 
 function renderOutcomeTable(results) {
-  elements.outcomeTableBody.innerHTML = results
-    .map((result) => {
-      const differenceClass =
-        result.difference > 0
-          ? "positive-value"
-          : result.difference < 0
-            ? "negative-value"
-            : "";
+  elements.outcomeTableBody.innerHTML =
+    results
+      .map((result) => {
+        const differenceClass =
+          result.difference > 0
+            ? "positive-value"
+            : result.difference < 0
+              ? "negative-value"
+              : "";
 
-      return `
-        <tr>
-          <td>${escapeHtml(result.label)}</td>
+        return `
+          <tr>
+            <td>
+              ${escapeHtml(result.label)}
+            </td>
 
-          <td>
-            ${formatOutcomeCell(
-              result,
-              "trend"
-            )}
-          </td>
+            <td>
+              ${formatOutcomeCell(
+                result,
+                "trend"
+              )}
+            </td>
 
-          <td>
-            ${formatOutcomeCell(
-              result,
-              "baseline"
-            )}
-          </td>
+            <td>
+              ${formatOutcomeCell(
+                result,
+                "baseline"
+              )}
+            </td>
 
-          <td class="${differenceClass}">
-            ${formatOutcomeDifference(result)}
-          </td>
-        </tr>
-      `;
-    })
-    .join("");
+            <td class="${differenceClass}">
+              ${formatOutcomeDifference(
+                result
+              )}
+            </td>
+          </tr>
+        `;
+      })
+      .join("");
 }
 
-function formatOutcomeCell(result, group) {
-  const value = result[`${group}_value`];
+function formatOutcomeCell(
+  result,
+  group
+) {
+  const value =
+    result[`${group}_value`];
+
   const denominator =
-    result[`${group}_denominator`];
+    result[
+      `${group}_denominator`
+    ];
 
   if (value === null) {
     return "No data";
   }
 
   if (result.type === "binary") {
-    const count = result[`${group}_count`];
+    const count =
+      result[`${group}_count`];
 
     return (
       `${count} of ${denominator} `
@@ -1151,7 +1390,7 @@ function renderOccurrenceTable(result) {
   const headers = [
     "Season",
     "Team",
-    "Window",
+    "First matching window",
     ...conditionHeaders,
     "Final record",
     "Win %",
@@ -1189,55 +1428,80 @@ function renderOccurrenceTable(result) {
     elements.occurrenceLimitMessage.textContent =
       `Showing the first ${MAX_RENDERED_OCCURRENCES} `
       + `of ${result.occurrences.length.toLocaleString()} `
-      + "occurrences. Download the CSV for the full result.";
+      + "matched team-seasons. Download the CSV for the full result.";
   } else {
     elements.occurrenceLimitMessage.textContent =
       `Showing all ${result.occurrences.length.toLocaleString()} `
-      + "occurrences.";
+      + "matched team-seasons. For rolling queries, only the first "
+      + "qualifying window per team-season is displayed.";
   }
 }
 
 function renderOccurrenceRow(occurrence) {
-  const outcome = occurrence.outcome_row;
+  const outcome =
+    occurrence.outcome_row;
 
-  const conditionCells = occurrence.conditions
-    .map(
-      (condition) => `
-        <td>
-          ${formatNumber(
-            condition.aggregated_value
-          )}
-        </td>
-      `
-    )
-    .join("");
+  const conditionCells =
+    occurrence.conditions
+      .map(
+        (condition) => `
+          <td>
+            ${formatNumber(
+              condition.aggregated_value
+            )}
+          </td>
+        `
+      )
+      .join("");
 
-  const wins = getSeasonValue(outcome, "wins");
-  const losses = getSeasonValue(outcome, "losses");
-  const winPct = getSeasonValue(outcome, "wp");
-  const madePlayoffs = getSeasonValue(
+  const wins = getSeasonValue(
     outcome,
-    "po"
+    "wins"
   );
-  const playoffRound = getSeasonValue(
+
+  const losses = getSeasonValue(
     outcome,
-    "pr"
+    "losses"
   );
-  const netRatingRank = getSeasonValue(
+
+  const winPct = getSeasonValue(
     outcome,
-    "nrr_rank"
+    "wp"
   );
+
+  const madePlayoffs =
+    getSeasonValue(
+      outcome,
+      "po"
+    );
+
+  const playoffRound =
+    getSeasonValue(
+      outcome,
+      "pr"
+    );
+
+  const netRatingRank =
+    getSeasonValue(
+      outcome,
+      "nrr_rank"
+    );
 
   return `
     <tr>
-      <td>${escapeHtml(occurrence.season)}</td>
-
       <td>
-        ${escapeHtml(occurrence.team_name)}
+        ${escapeHtml(occurrence.season)}
       </td>
 
       <td>
-        Games ${occurrence.window_start_game}
+        ${escapeHtml(
+          occurrence.team_name
+        )}
+      </td>
+
+      <td>
+        Games
+        ${occurrence.window_start_game}
         –${occurrence.window_end_game}
       </td>
 
@@ -1257,11 +1521,17 @@ function renderOccurrenceRow(occurrence) {
       </td>
 
       <td>
-        ${madePlayoffs === 1 ? "Yes" : "No"}
+        ${
+          madePlayoffs === 1
+            ? "Yes"
+            : "No"
+        }
       </td>
 
       <td>
-        ${escapeHtml(playoffRound ?? "—")}
+        ${escapeHtml(
+          playoffRound ?? "—"
+        )}
       </td>
 
       <td>
@@ -1276,20 +1546,22 @@ function downloadCurrentResults() {
     return;
   }
 
-  const rows = state.currentResults.occurrences;
+  const rows =
+    state.currentResults.occurrences;
 
   const conditionCount =
-    state.currentResults.query.conditions.length;
+    state.currentResults.query
+      .conditions.length;
 
   const headers = [
     "season",
     "team_id",
     "team_name",
     "team_abbreviation",
-    "window_start_game",
-    "window_end_game",
-    "window_start_date",
-    "window_end_date",
+    "first_matching_window_start_game",
+    "first_matching_window_end_game",
+    "first_matching_window_start_date",
+    "first_matching_window_end_date",
   ];
 
   for (
@@ -1317,7 +1589,8 @@ function downloadCurrentResults() {
   const csvRows = [headers];
 
   for (const occurrence of rows) {
-    const outcome = occurrence.outcome_row;
+    const outcome =
+      occurrence.outcome_row;
 
     csvRows.push([
       occurrence.season,
@@ -1332,22 +1605,51 @@ function downloadCurrentResults() {
         (condition) =>
           condition.aggregated_value
       ),
-      getSeasonValue(outcome, "wins"),
-      getSeasonValue(outcome, "losses"),
-      getSeasonValue(outcome, "wp"),
-      getSeasonValue(outcome, "po"),
-      getSeasonValue(outcome, "pr"),
-      getSeasonValue(outcome, "ch"),
-      getSeasonValue(outcome, "orr_rank"),
-      getSeasonValue(outcome, "drr_rank"),
-      getSeasonValue(outcome, "nrr_rank"),
+      getSeasonValue(
+        outcome,
+        "wins"
+      ),
+      getSeasonValue(
+        outcome,
+        "losses"
+      ),
+      getSeasonValue(
+        outcome,
+        "wp"
+      ),
+      getSeasonValue(
+        outcome,
+        "po"
+      ),
+      getSeasonValue(
+        outcome,
+        "pr"
+      ),
+      getSeasonValue(
+        outcome,
+        "ch"
+      ),
+      getSeasonValue(
+        outcome,
+        "orr_rank"
+      ),
+      getSeasonValue(
+        outcome,
+        "drr_rank"
+      ),
+      getSeasonValue(
+        outcome,
+        "nrr_rank"
+      ),
     ]);
   }
 
   const csvText = csvRows
     .map(
       (row) =>
-        row.map(csvEscape).join(",")
+        row
+          .map(csvEscape)
+          .join(",")
     )
     .join("\n");
 
@@ -1358,18 +1660,26 @@ function downloadCurrentResults() {
     }
   );
 
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
+  const url =
+    URL.createObjectURL(blob);
+
+  const anchor =
+    document.createElement("a");
 
   anchor.href = url;
-  anchor.download = "nba_trend_occurrences.csv";
+  anchor.download =
+    "nba_trend_occurrences.csv";
+
   anchor.click();
 
   URL.revokeObjectURL(url);
 }
 
 function csvEscape(value) {
-  if (value === null || value === undefined) {
+  if (
+    value === null
+    || value === undefined
+  ) {
     return "";
   }
 
@@ -1380,7 +1690,10 @@ function csvEscape(value) {
     || text.includes('"')
     || text.includes("\n")
   ) {
-    return `"${text.replaceAll('"', '""')}"`;
+    return `"${text.replaceAll(
+      '"',
+      '""'
+    )}"`;
   }
 
   return text;
@@ -1399,16 +1712,23 @@ function formatPercentage(value) {
 
 function formatSignedPercentage(value) {
   const formatted =
-    formatPercentage(Math.abs(value));
+    formatPercentage(
+      Math.abs(value)
+    );
 
-  return `${value >= 0 ? "+" : "-"}${formatted}`;
+  return (
+    `${value >= 0 ? "+" : "-"}`
+    + formatted
+  );
 }
 
 function formatNumber(value) {
   if (
     value === null
     || value === undefined
-    || !Number.isFinite(Number(value))
+    || !Number.isFinite(
+      Number(value)
+    )
   ) {
     return "—";
   }
@@ -1423,18 +1743,28 @@ function formatNumber(value) {
 }
 
 function formatSignedNumber(value) {
-  const sign = value >= 0 ? "+" : "";
+  const sign =
+    value >= 0 ? "+" : "";
 
-  return `${sign}${formatNumber(value)}`;
+  return (
+    `${sign}${formatNumber(value)}`
+  );
 }
 
 function showError(message) {
-  elements.errorMessage.textContent = message;
-  elements.errorPanel.classList.remove("hidden");
+  elements.errorMessage.textContent =
+    message;
+
+  elements.errorPanel.classList.remove(
+    "hidden"
+  );
 }
 
 function hideError() {
-  elements.errorPanel.classList.add("hidden");
+  elements.errorPanel.classList.add(
+    "hidden"
+  );
+
   elements.errorMessage.textContent = "";
 }
 
