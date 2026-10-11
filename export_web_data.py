@@ -349,6 +349,12 @@ def load_team_games() -> pd.DataFrame:
         ignore_index=True,
     )
 
+    for source, flag, comparison in (("reb_diff", "won_rebound_battle", "gt"),
+                                     ("ast_diff", "won_assist_battle", "gt"),
+                                     ("tov_diff", "won_turnover_battle", "lt")):
+        values = pd.to_numeric(combined[source], errors="coerce")
+        combined[flag] = getattr(values, comparison)(0).astype("Int8").where(values.notna())
+
     duplicate_count = int(
         combined.duplicated(
             subset=[

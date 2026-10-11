@@ -200,6 +200,12 @@ function createColumnIndex(columns) {
 }
 
 function getGameValue(row, key) {
+  const source = { wrb: "rd", wab: "ad", wtb: "td" }[key];
+  if (source) {
+    const value = row[state.gameColumns[source]];
+    if (value === null || value === undefined || !Number.isFinite(Number(value))) return null;
+    return Number(key === "wtb" ? value < 0 : value > 0);
+  }
   return row[state.gameColumns[key]];
 }
 
@@ -639,6 +645,7 @@ function runQueryFromForm() {
 
 function executeTrendQuery(query) {
   const eligibleGroups = [];
+  let selectedTeamSeasons = 0;
 
   for (
     const [key, games]
@@ -656,9 +663,13 @@ function executeTrendQuery(query) {
       continue;
     }
 
+    selectedTeamSeasons += 1;
+    const windows = buildWindows(games, query.window).filter((window) => windowIsUsable(window, query));
+    if (!windows.length || !state.seasonOutcomes.has(key)) continue;
     eligibleGroups.push({
       key,
       games,
+      windows,
     });
   }
 
@@ -680,10 +691,7 @@ function executeTrendQuery(query) {
   let matchingWindowCount = 0;
 
   for (const group of eligibleGroups) {
-    const windows = buildWindows(
-      group.games,
-      query.window
-    );
+    const windows = group.windows;
 
     let firstMatchingOccurrence = null;
 
@@ -821,6 +829,8 @@ function executeTrendQuery(query) {
 
   return {
     query,
+    selected_team_seasons: selectedTeamSeasons,
+    excluded_team_seasons: selectedTeamSeasons - eligibleGroups.length,
     eligible_team_seasons:
       eligibleGroups.length,
 
@@ -854,6 +864,19 @@ function executeTrendQuery(query) {
       baselineRows
     ),
   };
+}
+
+function windowIsUsable(games, query) {
+  if (!games.length) return false;
+  const start = getGameValue(games[0], "gn");
+  if (query.window.type === "first_n_games" && start !== 1) return false;
+  if (query.window.type === "games_range" && start !== query.window.start_game) return false;
+  return games.every((game, i) => getGameValue(game, "gn") === start + i &&
+    query.conditions.every((condition) => {
+      const metric = state.metadata.metrics.find((item) => item.id === condition.metric);
+      const value = getGameValue(game, metric.key);
+      return value !== null && value !== undefined && Number.isFinite(Number(value));
+    }));
 }
 
 function buildWindows(
@@ -1234,6 +1257,8 @@ function renderResults(result) {
 }
 
 function renderSummaryCards(result) {
+  document.getElementById("coverageMessage").textContent =
+    `${result.excluded_team_seasons.toLocaleString()} of ${result.selected_team_seasons.toLocaleString()} selected team-seasons excluded: the requested window or a required statistic was incomplete. Every condition, including OR queries, requires a fully observed window. Final-season outcomes include the observation window; use Research for subsequent performance.`;
   const cards = [
     {
       label: "Eligible team-seasons",

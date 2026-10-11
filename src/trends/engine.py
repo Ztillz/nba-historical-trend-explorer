@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import operator
+import math
 from dataclasses import asdict
 from typing import Callable
 
@@ -66,11 +67,19 @@ class TrendEngine:
                 f"Unsupported window type: {query.window.type}"
             )
 
+        outcome_keys = set(zip(self.team_seasons["season"], self.team_seasons["team_id"]))
+        valid_windows = [
+            window for window in window_rows
+            if self._window_is_usable(window, query)
+            and (window.iloc[0]["season"], window.iloc[0]["team_id"]) in outcome_keys
+        ]
         occurrences = self._evaluate_windows(
-            window_rows=window_rows,
+            window_rows=valid_windows,
             query=query,
         )
 
+        matching_window_count = len(occurrences)
+        occurrences = occurrences.drop_duplicates(["season", "team_id"], keep="first").reset_index(drop=True)
         occurrences = self._attach_outcomes(
             occurrences=occurrences,
             query=query,
@@ -79,10 +88,28 @@ class TrendEngine:
         summary = self._build_summary(
             occurrences=occurrences,
             query=query,
-            eligible_games=games,
+            eligible_games=(pd.concat(valid_windows, ignore_index=True) if valid_windows else games.iloc[:0]),
         )
 
+        summary["matching_window_count"] = matching_window_count
+        summary["selected_team_seasons"] = len(games[["season", "team_id"]].drop_duplicates())
+        summary["excluded_team_seasons"] = summary["selected_team_seasons"] - summary["eligible_team_seasons"]
+        summary["window_policy"] = "Complete consecutive games and all requested metrics observed; one earliest match per team-season."
+
         return occurrences, summary
+
+    @staticmethod
+    def _window_is_usable(window: pd.DataFrame, query: TrendQuery) -> bool:
+        numbers = window["game_number"].tolist()
+        if not numbers or numbers != list(range(numbers[0], numbers[-1] + 1)):
+            return False
+        if window["game_id"].nunique() != len(window):
+            return False
+        for condition in query.conditions:
+            values = pd.to_numeric(window[get_metric_definition(condition.metric).column], errors="coerce")
+            if not values.map(lambda value: pd.notna(value) and math.isfinite(value)).all():
+                return False
+        return True
 
     def _prepare_data(self) -> None:
         required_game_columns = {
@@ -126,6 +153,18 @@ class TrendEngine:
             self.team_seasons["team_id"],
             errors="raise",
         ).astype("int64")
+
+        if self.team_games.duplicated(["season", "season_type", "team_id", "game_number"]).any():
+            raise ValueError("Duplicate team-game numbers in input.")
+        if self.team_seasons.duplicated(["season", "team_id"]).any():
+            raise ValueError("Duplicate team-season outcomes in input.")
+        # Normalize legacy snapshots where a missing differential was converted to zero.
+        for source, flag, compare in (("reb_diff", "won_rebound_battle", operator.gt),
+                                      ("ast_diff", "won_assist_battle", operator.gt),
+                                      ("tov_diff", "won_turnover_battle", operator.lt)):
+            if source in self.team_games and flag in self.team_games:
+                values = pd.to_numeric(self.team_games[source], errors="coerce")
+                self.team_games[flag] = compare(values, 0).astype("Int8").where(values.notna())
 
     def _filter_population(
         self,
@@ -691,6 +730,8 @@ class TrendEngine:
         operator_text: str,
         right_value: float,
     ) -> bool:
+        if not math.isfinite(left_value):
+            return False
         return bool(
             OPERATORS[operator_text](
                 left_value,

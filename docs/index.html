@@ -14,10 +14,12 @@
     rel="stylesheet"
     href="./styles.css"
   >
+  <link rel="stylesheet" href="./research.css">
 </head>
 
 <body>
   <header class="site-header">
+    <nav class="site-nav" aria-label="Main navigation"><a class="brand" href="./index.html">NBA Trend Explorer</a><div><a href="./index.html" aria-current="page">Historical queries</a><a href="./research.html">Research</a><a href="./methods.html">Methods &amp; guide</a><a href="https://github.com/Ztillz/nba-historical-trend-explorer">GitHub ↗</a></div></nav>
     <div class="header-content">
       <div>
         <p class="eyebrow">NBA historical research</p>
@@ -199,6 +201,7 @@
           id="summaryCards"
           class="summary-grid"
         ></div>
+        <p id="coverageMessage" class="muted-text" aria-live="polite"></p>
       </section>
 
       <section class="panel">

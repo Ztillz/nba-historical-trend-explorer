@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore NBA early-season signals, subsequent results, and chronological benchmarks across 43 seasons.">
+  <title>Early-season research · NBA Trend Explorer</title>
+  <link rel="stylesheet" href="./styles.css"><link rel="stylesheet" href="./research.css">
+  <script defer src="./research-analysis.js"></script><script defer src="./research-ui.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to research</a>
+  <header class="research-header">
+    <nav class="site-nav" aria-label="Main navigation"><a class="brand" href="./index.html"><span class="brand-mark">NBA</span> Trend Explorer</a><div><a href="./index.html">Historical queries</a><a href="./research.html" aria-current="page">Research</a><a href="./methods.html">Methods &amp; guide</a><a href="https://github.com/Ztillz/nba-historical-trend-explorer">GitHub ↗</a></div></nav>
+    <div class="research-hero"><div><p class="eyebrow">Early signals / later results</p><h1>What carries forward?</h1><p>Explore how a team’s first games relate to what happens next. Inspect the evidence, compare eras, and test whether a signal adds to early record and point differential.</p></div><div class="hero-aside"><span class="live-dot"></span> Historical snapshot<p id="snapshotStatus" role="status">Loading research data…</p><a href="https://github.com/Ztillz/nba-historical-trend-explorer/blob/main/research/FIRST20_FINDINGS.md">Read the first-20-game report ↗</a></div></div>
+  </header>
+  <main id="main" class="page-shell research-shell">
+    <section class="panel filter-panel" aria-labelledby="filtersTitle">
+      <div class="section-heading"><div><p class="eyebrow">Choose an experiment</p><h2 id="filtersTitle">Observation → outcome</h2></div><button id="resetResearch" class="button secondary-button">Reset</button></div>
+      <form id="researchForm"><div class="research-filters">
+        <div><label for="researchStart">Starting season</label><select id="researchStart"></select></div><div><label for="researchEnd">Ending season</label><select id="researchEnd"></select></div>
+        <div><label for="checkpoint">Observe first</label><select id="checkpoint"><option value="10">10 games</option><option value="20" selected>20 games</option><option value="30">30 games</option></select></div>
+        <div><label for="horizon">Measure afterward</label><select id="horizon"><option value="remaining">Rest of season</option><option value="next_10">Next 10 games</option><option value="next_20">Next 20 games</option></select></div>
+        <div><label for="target">Later performance</label><select id="target"><option value="future_win_pct">Win percentage</option><option value="future_point_diff">Point differential / game</option></select></div>
+        <div><label for="holdoutStart">Evaluate seasons from</label><select id="holdoutStart"></select></div>
+      </div><div class="filter-footer"><p id="experimentSentence">Predictors and outcomes use separate games.</p><div><button type="submit" id="runResearch" class="button primary-button">Explore findings</button><button type="button" id="copyResearchLink" class="button secondary-button">Copy experiment link</button></div></div></form>
+      <p id="researchStatus" class="muted-text" role="status" aria-live="polite"></p><p id="researchError" class="error-panel" role="alert" hidden></p>
+    </section>
+    <div id="researchResults" hidden>
+      <section id="researchCards" class="summary-grid" aria-label="Sample and association"></section>
+      <section class="research-grid">
+        <article class="panel signal-panel"><div class="section-heading"><div><p class="eyebrow">Screen the signals</p><h2>Early statistics</h2></div><span class="subtle-badge">Spearman ρ</span></div><p class="muted-text">Select a statistic to explore its relationship. Positive ρ means higher early values tend to accompany higher later performance.</p><div class="table-wrapper"><table class="signal-table"><thead><tr><th scope="col">Statistic</th><th scope="col">ρ</th><th scope="col">95% interval</th><th scope="col">n</th></tr></thead><tbody id="signalBody"></tbody></table></div></article>
+        <article class="panel plot-panel"><div class="section-heading"><div><p class="eyebrow">Inspect the relationship</p><h2 id="plotTitle">Rebound differential</h2></div><span id="plotUnits" class="subtle-badge"></span></div><div class="plot-legend"><span><i class="earlier-dot"></i>Earlier seasons</span><span><i class="later-dot"></i>Later evaluation seasons</span></div><div id="scatterPlot" class="scatter-plot"></div><p class="muted-text">Each dot is one team-season. Hover for values; click a dot or a team in the evidence table to inspect its dates.</p><div id="selectedTeam" class="team-detail" aria-live="polite">Select a team-season to inspect its observation and outcome windows.</div><p id="associationNote" class="callout"></p></article>
+      </section>
+      <section class="research-grid benchmark-grid">
+        <article class="panel"><div class="section-heading"><div><p class="eyebrow">Does it add information?</p><h2>Later-season benchmark</h2></div></div><p id="benchmarkDefinition" class="muted-text"></p><div id="benchmarkBars"></div><p id="benchmarkVerdict" class="callout"></p><p class="muted-text">Models are fitted on earlier seasons only and evaluated on the same complete later team-seasons. This is retrospective evaluation; these seasons have already been examined. <a href="./methods.html#validation">Read the model assumptions.</a></p></article>
+        <article class="panel"><p class="eyebrow">Check the context</p><h2>Across eras</h2><p class="muted-text">A pooled relationship can hide a change over time.</p><div class="table-wrapper"><table><thead><tr><th scope="col">Starting-season decade</th><th scope="col">ρ</th><th scope="col">n</th></tr></thead><tbody id="eraBody"></tbody></table></div><div id="cohortContext" class="cohort-context"></div></article>
+      </section>
+      <section class="panel"><div class="section-heading"><div><p class="eyebrow">Follow every finding to its source</p><h2>Team-season evidence</h2></div><div class="export-actions"><button id="exportResearch" class="button secondary-button">Download evidence CSV</button><button id="exportSummary" class="button secondary-button">Download analysis JSON</button></div></div><div class="evidence-controls"><div><label for="evidenceSearch">Find a team or season</label><input id="evidenceSearch" type="search" placeholder="e.g. Celtics or 2019-20"></div><div><label for="evidenceSort">Order by</label><select id="evidenceSort"><option value="season">Season, then team</option><option value="signal_desc">Highest early signal</option><option value="signal_asc">Lowest early signal</option><option value="outcome_desc">Best later performance</option><option value="outcome_asc">Lowest later performance</option></select></div></div><div class="table-wrapper"><table><thead><tr><th scope="col">Season</th><th scope="col">Team</th><th scope="col" id="evidenceSignal">Early statistic</th><th scope="col">Early win %</th><th scope="col">Later outcome</th><th scope="col">Later games</th><th scope="col">Period</th></tr></thead><tbody id="evidenceBody"></tbody></table></div><div class="pagination"><button id="previousEvidence" class="button secondary-button">Previous</button><p id="evidenceCount" class="muted-text" aria-live="polite"></p><button id="nextEvidence" class="button secondary-button">Next</button></div></section>
+      <section class="panel coverage-panel"><p class="eyebrow">Know the population</p><h2>Coverage &amp; interpretation</h2><p id="coverageNote"></p><p>Complete observation and outcome windows are required. A missing early statistic excludes that team-season from that statistic’s correlation; missing values stay unknown. Intervals resample whole seasons. Rank association does not establish causation, and screening many statistics can produce chance findings.</p><a href="./methods.html#coverage">View coverage rules and reproducibility instructions →</a></section>
+    </div>
+  </main><footer class="research-footer">NBA Trend Explorer · Historical research, with inspectable evidence. <a href="./methods.html">Methods</a> · <a href="https://github.com/Ztillz/nba-historical-trend-explorer">Source &amp; documentation</a></footer>
+</body></html>

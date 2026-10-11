@@ -294,19 +294,19 @@ def _add_differentials(
 
     team_games["won_rebound_battle"] = (
         team_games["reb_diff"] > 0
-    ).astype("int8")
+    ).astype("Int8").where(team_games["reb_diff"].notna())
 
     team_games["tied_rebound_battle"] = (
         team_games["reb_diff"] == 0
-    ).astype("int8")
+    ).astype("Int8").where(team_games["reb_diff"].notna())
 
     team_games["won_assist_battle"] = (
         team_games["ast_diff"] > 0
-    ).astype("int8")
+    ).astype("Int8").where(team_games["ast_diff"].notna())
 
     team_games["won_turnover_battle"] = (
         team_games["tov_diff"] < 0
-    ).astype("int8")
+    ).astype("Int8").where(team_games["tov_diff"].notna())
 
     return team_games
 
