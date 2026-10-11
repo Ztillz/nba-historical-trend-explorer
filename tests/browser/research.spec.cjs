@@ -31,8 +31,8 @@ test("default research, metric selection, evidence and exports",async({page},tes
 test("alternate experiment and validation feedback",async({page})=>{
   await page.goto("/research.html");await expect(page.locator("#researchStatus")).toContainText("Experiment ready.");
   await page.getByLabel("Observe first",{exact:true}).selectOption("10");
-  await page.getByLabel("Measure afterward").selectOption("next_10");
-  await page.getByLabel("Later performance").selectOption("future_point_diff");
+  await page.getByLabel("Measure afterward",{exact:true}).selectOption("next_10");
+  await page.getByLabel("Later performance",{exact:true}).selectOption("future_point_diff");
   await page.getByRole("button",{name:"Explore findings"}).click();
   await expect(page.locator("#researchStatus")).toContainText("Experiment ready.");
   await expect(page.locator("#plotUnits")).toContainText("First 10");

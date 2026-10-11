@@ -60,6 +60,7 @@
 .cohort-context { margin-top:22px;border-top:1px solid var(--border);padding-top:18px;font-size:.86rem;line-height:1.6; }
 .cohort-context h3 { font-size:1rem;margin-bottom:10px; }
 .evidence-controls { display:grid;grid-template-columns:1fr 270px;gap:16px;margin-bottom:18px; }
+.evidence-controls>div { display:flex;flex-direction:column;gap:7px;min-width:0; }
 .export-actions { display:flex;gap:10px;flex-wrap:wrap; }
 #evidenceBody button { border:0;background:none;color:#145e68;text-align:left;padding:0;cursor:pointer;text-decoration:underline; }
 .pagination { display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:20px; }
