@@ -34,6 +34,7 @@
 .research-shell .summary-card { background:#fff;border:1px solid var(--border);padding:21px;border-radius:10px; }
 .research-shell .summary-value { font-size:1.85rem;letter-spacing:-.03em; }
 .summary-detail { margin:8px 0 0;font-size:.8rem;color:var(--muted);line-height:1.5; }
+.signal-table { white-space:normal; }
 .signal-table th,.signal-table td { padding:12px 8px;font-size:.83rem; }
 .signal-table tbody tr.active { background:#eaf5f3; }
 .signal-table button { background:none;border:0;text-align:left;padding:0;color:#164d5e;cursor:pointer;line-height:1.4;font-weight:650; }
