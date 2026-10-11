@@ -20,6 +20,7 @@
 .research-shell { width:min(1280px,calc(100% - 32px)); }
 .research-shell .eyebrow { color:#145e68; }
 .research-filters { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px; }
+.research-filters>div { display:flex;flex-direction:column;gap:7px;min-width:0; }
 .filter-footer { display:flex;justify-content:space-between;gap:22px;align-items:center;margin-top:20px; }
 .filter-footer p { margin:0;color:var(--muted);max-width:650px;font-size:.91rem;line-height:1.6; }
 .filter-footer>div { display:flex;gap:10px;flex-shrink:0; }

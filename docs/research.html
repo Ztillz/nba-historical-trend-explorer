@@ -17,11 +17,11 @@
     <section class="panel filter-panel" aria-labelledby="filtersTitle">
       <div class="section-heading"><div><p class="eyebrow">Choose an experiment</p><h2 id="filtersTitle">Observation → outcome</h2></div><button id="resetResearch" class="button secondary-button">Reset</button></div>
       <form id="researchForm"><div class="research-filters">
-        <label>Starting season<select id="researchStart"></select></label><label>Ending season<select id="researchEnd"></select></label>
-        <label>Observe first<select id="checkpoint"><option value="10">10 games</option><option value="20" selected>20 games</option><option value="30">30 games</option></select></label>
-        <label>Measure afterward<select id="horizon"><option value="remaining">Rest of season</option><option value="next_10">Next 10 games</option><option value="next_20">Next 20 games</option></select></label>
-        <label>Later performance<select id="target"><option value="future_win_pct">Win percentage</option><option value="future_point_diff">Point differential / game</option></select></label>
-        <label>Evaluate seasons from<select id="holdoutStart"></select></label>
+        <div><label for="researchStart">Starting season</label><select id="researchStart"></select></div><div><label for="researchEnd">Ending season</label><select id="researchEnd"></select></div>
+        <div><label for="checkpoint">Observe first</label><select id="checkpoint"><option value="10">10 games</option><option value="20" selected>20 games</option><option value="30">30 games</option></select></div>
+        <div><label for="horizon">Measure afterward</label><select id="horizon"><option value="remaining">Rest of season</option><option value="next_10">Next 10 games</option><option value="next_20">Next 20 games</option></select></div>
+        <div><label for="target">Later performance</label><select id="target"><option value="future_win_pct">Win percentage</option><option value="future_point_diff">Point differential / game</option></select></div>
+        <div><label for="holdoutStart">Evaluate seasons from</label><select id="holdoutStart"></select></div>
       </div><div class="filter-footer"><p id="experimentSentence">Predictors and outcomes use separate games.</p><div><button type="submit" id="runResearch" class="button primary-button">Explore findings</button><button type="button" id="copyResearchLink" class="button secondary-button">Copy experiment link</button></div></div></form>
       <p id="researchStatus" class="muted-text" role="status" aria-live="polite"></p><p id="researchError" class="error-panel" role="alert" hidden></p>
     </section>
