@@ -59,7 +59,7 @@ This is **retrospective chronological evaluation**: these seasons have already b
 
 ## Coverage and limitations
 
-Snapshot: 1983–84 through 2025–26, 98,236 game rows/1,223 team-seasons. Basic gaps occur in the first two seasons; advanced season ratings start in 1996–97. Denominators reflect coverage. The research payload records observation/future exclusions and availability by predictor.
+Snapshot: 1983–84 through 2025–26, 98,234 game rows/1,223 team-seasons. Basic gaps occur in the first two seasons; advanced season ratings start in 1996–97. Denominators reflect coverage. The research payload records observation/future exclusions and availability by predictor.
 
 Models do not adjust for opponents, schedule strength, injuries, roster changes, playoff-format differences, or pace/strategy changes. Decade splits do not remove confounding. Teams in a season share games; franchises repeat. Rare championship cohorts need care.
 

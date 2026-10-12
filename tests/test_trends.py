@@ -71,5 +71,12 @@ class TrendsTest(unittest.TestCase):
         self.assertEqual(summary["eligible_team_seasons"],1)
         self.assertEqual(summary["excluded_team_seasons"],2)
 
+    def test_unplayed_fixtures_are_excluded_and_partial_results_rejected(self):
+        from src.transforms.team_games import _remove_unplayed_games
+        raw=pd.DataFrame(dict(GAME_ID=['played','played','cancelled','cancelled'],WL=['W','L',None,None],MIN=[48,48,0,0]))
+        self.assertEqual(len(_remove_unplayed_games(raw)),2)
+        raw.loc[3,'WL']='W';raw.loc[3,'MIN']=48
+        with self.assertRaisesRegex(ValueError,'partially played'):_remove_unplayed_games(raw)
+
 
 if __name__ == "__main__": unittest.main()

@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent
 
 def write_json(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, allow_nan=False, separators=(",", ":")) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(value, ensure_ascii=False, allow_nan=False, separators=(",", ":")) + "\n", encoding="utf-8", newline="\n")
 
 
 def generate(data_directory: Path, reps=BOOTSTRAP_REPS):
