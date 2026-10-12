@@ -30,6 +30,6 @@ test('advanced mobile layout and navigation',async({page},testInfo)=>{
  await expect(page.locator('#advancedStatus')).toContainText('Advanced experiment ready.');
  const width=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:window.innerWidth}));expect(width.page).toBeLessThanOrEqual(width.viewport);
  await page.screenshot({path:testInfo.outputPath('advanced-mobile.png'),fullPage:true});
- await page.getByRole('link',{name:'Methods & guide',exact:true}).click();await expect(page.getByRole('heading',{name:'Advanced efficiency and style research',exact:true})).toBeVisible();
+ await page.getByRole('navigation',{name:'Main navigation'}).getByRole('link',{name:'Methods & guide',exact:true}).click();await expect(page.getByRole('heading',{name:'Advanced efficiency and style research',exact:true})).toBeVisible();
  await page.getByRole('link',{name:'Advanced research',exact:true}).click();await expect(page.locator('#advancedStatus')).toContainText('Advanced experiment ready.');
 });
