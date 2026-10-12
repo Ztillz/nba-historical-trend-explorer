@@ -2,15 +2,18 @@
 
 [Historical queries](https://ztillz.github.io/nba-historical-trend-explorer/) · [Research explorer](https://ztillz.github.io/nba-historical-trend-explorer/research.html) · [Website guide](https://ztillz.github.io/nba-historical-trend-explorer/methods.html)
 
+[Advanced efficiency & style research](https://ztillz.github.io/nba-historical-trend-explorer/advanced.html) · [Advanced findings](research/ADVANCED_FINDINGS.md)
+
 Ask a basketball question, find historical teams that fit it, and inspect how their seasons developed. The repository contains a static GitHub Pages website, a validated NBA data pipeline, a configurable Python trend engine, and reproducible early-season research.
 
-The committed snapshot contains **98,236 regular-season team-game rows and 1,223 team-seasons**, from **1983–84 through 2025–26**. Advanced season ratings start in 1996–97. Basic statistics have gaps in the first two seasons. This is a historical snapshot, not a live feed.
+The committed snapshot contains **98,234 regular-season team-game rows and 1,223 team-seasons**, from **1983–84 through 2025–26**. Advanced season ratings start in 1996–97. Basic statistics have gaps in the first two seasons. This is a historical snapshot, not a live feed.
 
 ## Explore the website
 
 - **Historical queries:** combine AND/OR conditions, use first-N/fixed/rolling windows, compare full-season outcomes with eligible teams, inspect the first matching window per team-season, and download CSV.
 - **Research:** observe first 10/20/30 games; measure the remaining season or next 10/20 games. Explore Spearman correlations, scatterplots, era comparisons, chronological benchmarks, and searchable/exportable team evidence. Share an experiment with its URL.
 - **Methods & guide:** explains population rules, missing data, subsequent outcomes, uncertainty, model assumptions, and reproducibility.
+- **Advanced research:** 40,696 game-level NBA-derived rows, 17 seasons / 510 team-seasons. Explore 18 characteristics, their persistence, seven research questions, expanding-season forecasts, individual-signal diagnostics, source sensitivity, and exports. First 20 → next 20 is the primary experiment.
 
 Start with [the generated first-20-game findings](research/FIRST20_FINDINGS.md). Its benchmark adds rebounds, assists, and turnovers together; the interactive view adds the selected signal individually. Strong raw association need not improve an early-record/point-differential baseline.
 
@@ -51,6 +54,23 @@ Default: 500 whole-season resamples, seed 471. Use `python run_research.py --boo
 
 ## Refresh underlying data
 
+### Advanced game-level collection and research
+
+```sh
+# Small source audit; does not replace the published snapshot:
+python collect_advanced_games.py --start-end-year 2025 --end-end-year 2025 --audit-only
+# Full supported modern archive, end-years 2010–2026:
+python collect_advanced_games.py
+# Fully offline research from committed game-level data:
+python run_advanced_research.py
+```
+
+Direct NBA API access timed out during collection, so the new dataset is the documented public [llimllib/nba_data archive](https://github.com/llimllib/nba_data), derived from NBA Stats. Source file hashes, comparison counts and discrepancies are committed in `docs/data/advanced_sources.json`. Forty game rows differ in non-score counts from the older snapshot; a strict-source sensitivity analysis refits models excluding affected windows. See [advanced methods](research/ADVANCED_METHODS.md) for metric definitions and scope.
+
+The source audit found two zero-stat rows for the cancelled April 16, 2013 Celtics–Pacers fixture in the old snapshot. They were removed, the two season records corrected, and the first research regenerated. Historical collection now excludes wholly unplayed fixtures and rejects invalid played fixtures.
+
+### Original NBA pipeline
+
 Raw API caches and processed Parquet files are local and ignored by Git. Viewing the snapshot and rebuilding research do not require them. To refresh:
 
 ```sh
@@ -70,6 +90,7 @@ Use `python run_trend_query.py --help` for structured hypotheses in `config/tren
 python -m unittest discover -s tests -v
 node --test tests/research.test.cjs
 python tests/check_browser_parity.py
+python tests/check_advanced_snapshot.py
 ```
 
 Node.js 20+ is needed only for JavaScript checks and numerical parity. Tests cover rolling overlap, incomplete-window baselines, unknown binary flags, strict future targets, tied ranks, constant inputs, seeded whole-season bootstrap, and chronological common-sample benchmarks. Root `test_advanced_*.py` files are manual API diagnostics, not offline unit tests.

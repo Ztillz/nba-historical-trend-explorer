@@ -1,0 +1,8 @@
+.advanced-filters { grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); }
+#advancedFolds button,#advancedPersistence button,#advancedEvidence button { border:0;background:none;padding:0;text-align:left;color:#145e68;cursor:pointer;text-decoration:underline; }
+#advancedPersistence { white-space:normal; }
+#advancedFolds .gain { color:#14604b; }#advancedFolds .loss { color:#a33f2c; }
+#advancedAssociation { margin-bottom:20px; }
+#advancedScatter { max-width:1000px;margin:auto; }
+#advancedQuestionTitle { line-height:1.4; }
+@media(max-width:720px) { .advanced-filters { grid-template-columns:1fr; } }

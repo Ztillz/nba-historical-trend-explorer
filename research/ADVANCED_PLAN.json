@@ -1,0 +1,20 @@
+{
+  "status": "Exploratory plan written before examining advanced-model results; not preregistered",
+  "primary_experiment": "First 20 regular-season games -> next 20 games",
+  "secondary_experiment": "First 20 -> remaining season; other checkpoints/horizons exploratory",
+  "evaluation": "Expanding earlier-season training, evaluate next season; minimum five training seasons; no random team split",
+  "baseline": "Early value of the target statistic + early win percentage + early point differential",
+  "models": "Historical mean, same-statistic persistence, context baseline, baseline plus specified signals; shared complete cases; train-only scaling; fixed 1e-6 slope ridge",
+  "hypotheses": [
+    {"id":"rebound_defense","target":"def_rating","signals":["early_dreb_share"]},
+    {"id":"passing_offense","target":"off_rating","signals":["early_ast_tov","delta_ast_tov"]},
+    {"id":"opponent_shooting","target":"def_rating","signals":["early_opp_three_pct"]},
+    {"id":"three_variability","target":"margin_sd","signals":["early_three_rate"]},
+    {"id":"offensive_rebounds","target":"off_rating","signals":["early_oreb_share"]},
+    {"id":"shooting_change","target":"efg_pct","signals":["delta_efg_pct","early_three_rate"]},
+    {"id":"turnover_change","target":"tov_rate","signals":["delta_tov_rate"]}
+  ],
+  "uncertainty": "500 whole-season bootstrap draws, seed 471; pooled correlation and paired out-of-time MAE improvement intervals",
+  "sensitivity": "Refit/evaluate after excluding every team-season experiment with an old/new source discrepancy in its observation or outcome window",
+  "limitations": "Retrospective exploratory evaluation; hypotheses/horizons share samples; no multiplicity-adjusted significance claims; repeated franchises and shared games; no explicit opponent-strength or injury adjustment"
+}

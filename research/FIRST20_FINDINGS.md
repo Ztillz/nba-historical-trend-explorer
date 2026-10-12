@@ -9,14 +9,14 @@ Earlier seasons: before 2016-17; later evaluation: 2016-17 onward. Seed 471; 500
 
 | Early statistic | n | Spearman ρ | 95% season-bootstrap interval | Earlier ρ | Later ρ |
 |---|---:|---:|---|---:|---:|
-| Rebound differential | 1205 | 0.360 | [0.308, 0.418] | 0.370 | 0.332 |
+| Rebound differential | 1205 | 0.360 | [0.308, 0.418] | 0.369 | 0.332 |
 | Offensive rebound differential | 1177 | -0.056 | [-0.113, 0.004] | -0.067 | -0.013 |
 | Defensive rebound differential | 1177 | 0.494 | [0.445, 0.541] | 0.506 | 0.453 |
 | Assist differential | 1204 | 0.506 | [0.457, 0.553] | 0.538 | 0.395 |
-| Turnover differential | 1177 | -0.180 | [-0.243, -0.121] | -0.186 | -0.163 |
-| Point differential | 1223 | 0.734 | [0.701, 0.763] | 0.750 | 0.673 |
+| Turnover differential | 1177 | -0.180 | [-0.243, -0.120] | -0.186 | -0.163 |
+| Point differential | 1223 | 0.734 | [0.700, 0.763] | 0.750 | 0.673 |
 | Three-point attempt differential | 1179 | 0.116 | [0.055, 0.178] | 0.135 | 0.071 |
-| Free-throw attempt differential | 1223 | 0.270 | [0.223, 0.321] | 0.300 | 0.161 |
+| Free-throw attempt differential | 1223 | 0.269 | [0.223, 0.321] | 0.300 | 0.161 |
 | Early win percentage | 1223 | 0.704 | [0.673, 0.737] | 0.715 | 0.664 |
 | Games lost on rebounds | 1205 | -0.322 | [-0.374, -0.271] | -0.308 | -0.368 |
 

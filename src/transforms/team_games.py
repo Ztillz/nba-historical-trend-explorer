@@ -129,6 +129,10 @@ def build_team_games(
     """
     _validate_required_columns(raw_game_logs)
 
+    # NBA feeds may include cancelled fixtures with no result and zero minutes.
+    # Remove only wholly unplayed games; a partial/invalid played game is an error.
+    raw_game_logs = _remove_unplayed_games(raw_game_logs)
+
     team_games = (
         raw_game_logs
         .loc[:, sorted(REQUIRED_RAW_COLUMNS)]
@@ -220,6 +224,19 @@ def build_team_games(
         )
         .reset_index(drop=True)
     )
+
+
+def _remove_unplayed_games(raw: pd.DataFrame) -> pd.DataFrame:
+    removed = []
+    for game_id, group in raw.groupby("GAME_ID", sort=False):
+        played = group["WL"].isin(["W", "L"])
+        minutes = pd.to_numeric(group["MIN"], errors="coerce")
+        points = pd.to_numeric(group.get("PTS", pd.Series(0,index=group.index)), errors="coerce")
+        if not played.any() and minutes.fillna(0).le(0).all() and points.fillna(0).eq(0).all():
+            removed.append(game_id)
+        elif not played.all() or not minutes.gt(0).all():
+            raise ValueError(f"Invalid or partially played fixture {game_id}")
+    return raw.loc[~raw["GAME_ID"].isin(removed)].copy()
 
 
 def _attach_opponent_statistics(
